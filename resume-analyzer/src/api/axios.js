@@ -1,6 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:4500/api",
+    baseURL: "https://resume-analyzer-di3j.onrender.com/api",
 });
+
 export default api;
