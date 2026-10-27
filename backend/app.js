@@ -11,16 +11,19 @@ dotenv.config();
 
 const app = express();
 
-app.use(
-    cors({
-        origin: [
-            "http://localhost:5173",
-            "https://YOUR-FRONTEND-RENDER-URL.onrender.com"
-        ],
-        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-        allowedHeaders: ["Content-Type", "Authorization"]
-    })
-);
+const corsOptions = {
+    origin: [
+        "http://localhost:5173",
+        "https://resume-analyzer-1-oseb.onrender.com"
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true
+};
+
+app.use(cors(corsOptions));
+
+app.options("*", cors(corsOptions));
 
 app.use(express.json());
 
