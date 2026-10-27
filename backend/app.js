@@ -16,14 +16,22 @@ const corsOptions = {
         "http://localhost:5173",
         "https://resume-analyzer-1-oseb.onrender.com"
     ],
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    methods: [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE",
+        "PATCH",
+        "OPTIONS"
+    ],
+    allowedHeaders: [
+        "Content-Type",
+        "Authorization"
+    ],
     credentials: true
 };
 
 app.use(cors(corsOptions));
-
-app.options("*", cors(corsOptions));
 
 app.use(express.json());
 
