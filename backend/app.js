@@ -11,30 +11,33 @@ dotenv.config();
 
 const app = express();
 
-// Middleware
-app.use(cors());
+app.use(
+    cors({
+        origin: [
+            "http://localhost:5173",
+            "https://YOUR-FRONTEND-RENDER-URL.onrender.com"
+        ],
+        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        allowedHeaders: ["Content-Type", "Authorization"]
+    })
+);
+
 app.use(express.json());
 
-// Static uploads
 app.use("/uploads", express.static("uploads"));
 
-// Routes
 app.use("/api/auth", userRoutes);
 app.use("/api/desh", deshRoutes);
 app.use("/api/resume", resumeRoutes);
 
-// Test route
 app.get("/", (req, res) => {
     res.send("Resume Analyzer Backend is Running");
 });
 
-// Port
 const PORT = process.env.PORT || 4500;
 
-// Database
 connectDb();
 
-// Server
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
