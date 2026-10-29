@@ -134,7 +134,7 @@ const Home = () => {
             //     }
             // );
             const response = await axios.post(
-                "https://resume-analyzer-di3j.onrender.com/api/resume/upload",
+                "http://localhost:4500/api/resume/upload",
                 formData,
                 {
                     headers: {
