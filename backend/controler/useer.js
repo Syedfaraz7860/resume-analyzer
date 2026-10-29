@@ -40,11 +40,12 @@ export const signupUser = async (req, res) => {
 
 
 // ================= LOGIN =================
+// ================= LOGIN =================
 export const loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        // Check user exists or not
+        // Check user exists
         const userExists = await userModel.findOne({ email });
 
         if (!userExists) {
@@ -53,7 +54,7 @@ export const loginUser = async (req, res) => {
             });
         }
 
-        // Compare password
+        // Check password
         const isMatch = await bcrypt.compare(
             password,
             userExists.password
@@ -67,17 +68,31 @@ export const loginUser = async (req, res) => {
 
         // Generate JWT token
         const token = jwt.sign(
-            { id: userExists._id },
+            {
+                id: userExists._id
+            },
             process.env.JWT_SECRET,
-            { expiresIn: "1h" }
+            {
+                expiresIn: "1h"
+            }
         );
 
+        // Login success
         res.status(200).json({
             message: "User logged in successfully",
-            token
+
+            token,
+
+            user: {
+                id: userExists._id,
+                name: userExists.name,
+                email: userExists.email
+            }
         });
 
     } catch (error) {
+        console.error("Login error:", error);
+
         res.status(500).json({
             message: "Server error",
             error: error.message

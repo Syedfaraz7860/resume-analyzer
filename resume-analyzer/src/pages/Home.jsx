@@ -8,7 +8,45 @@ const Home = () => {
     const [result, setResult] = useState(null);
     const [dragActive, setDragActive] = useState(false);
 
-    const userId = localStorage.getItem("userId");
+    // Get the logged-in user's ID.
+    // Login normally stores userId, but if only the JWT token exists,
+    // try to read the user ID from the token as a fallback.
+    const getLoggedInUserId = () => {
+        const savedUserId = localStorage.getItem("userId");
+
+        if (savedUserId) {
+            return savedUserId;
+        }
+
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+            return null;
+        }
+
+        try {
+            const payload = JSON.parse(atob(token.split(".")[1]));
+
+            const tokenUserId =
+                payload.userId ||
+                payload.id ||
+                payload._id ||
+                payload.user?.id ||
+                payload.user?._id;
+
+            if (tokenUserId) {
+                localStorage.setItem("userId", String(tokenUserId));
+                return String(tokenUserId);
+            }
+        } catch (err) {
+            console.error("Unable to read login token:", err);
+        }
+
+        return null;
+    };
+
+    const userId = getLoggedInUserId();
+    const token = localStorage.getItem("token");
 
     const handleLogout = () => {
         localStorage.removeItem("userId");
@@ -71,8 +109,8 @@ const Home = () => {
             return;
         }
 
-        if (!userId) {
-            setError("User not logged in.");
+        if (!userId || !token) {
+            setError("Your login session is missing. Please login again.");
             return;
         }
 
@@ -86,16 +124,25 @@ const Home = () => {
             formData.append("resume", file);
             formData.append("userId", userId);
 
+            // const response = await axios.post(
+            //     "https://resume-analyzer-di3j.onrender.com/api/resume/upload",
+            //     formData,
+            //     {
+            //         headers: {
+            //             "Content-Type": "multipart/form-data",
+            //         },
+            //     }
+            // );
             const response = await axios.post(
                 "https://resume-analyzer-di3j.onrender.com/api/resume/upload",
                 formData,
                 {
                     headers: {
                         "Content-Type": "multipart/form-data",
+                        Authorization: `Bearer ${token}`,
                     },
                 }
             );
-
             console.log("Resume Response:", response.data);
 
             setResult(response.data);
